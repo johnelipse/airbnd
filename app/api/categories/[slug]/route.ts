@@ -4,13 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = await params;
+  const { slug } = await params;
   try {
     const category = await db.category.findUnique({
       where: {
-        id,
+        slug,
+      },
+      include: {
+        properties: true,
       },
     });
     return NextResponse.json(
@@ -33,13 +36,13 @@ export async function GET(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = await params;
+  const { slug } = await params;
   try {
     await db.category.delete({
       where: {
-        id,
+        slug,
       },
     });
     return NextResponse.json(
@@ -61,14 +64,14 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = await params;
+  const { slug } = await params;
   const data: CategoryProps = await req.json();
   try {
     const updatedCategory = await db.category.update({
       where: {
-        id,
+        slug,
       },
       data,
     });

@@ -29,7 +29,7 @@ export default function CategoryForm() {
   const [loading, setLoading] = useState(false);
   async function onSubmit(data: CategoryProps) {
     data.image = imageUrl;
-    data.slug = data.title.toLowerCase().replace(" ", "-");
+    data.slug = data.title.toLowerCase().split(" ").join("-").toLowerCase();
     try {
       setLoading(true);
       const response = await fetch(`/api/categories`, {
