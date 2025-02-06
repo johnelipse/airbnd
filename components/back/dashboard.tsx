@@ -36,24 +36,24 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
-const salesData = [
-  { name: "Sun", value: 0 },
-  { name: "Mon", value: 0 },
-  { name: "Tue", value: 0 },
-  { name: "Wed", value: 0 },
-  { name: "Thu", value: 0 },
-  { name: "Fri", value: 0 },
-  { name: "Sat", value: 0 },
-];
+// const salesData = [
+//   { name: "Sun", value: 0 },
+//   { name: "Mon", value: 0 },
+//   { name: "Tue", value: 0 },
+//   { name: "Wed", value: 0 },
+//   { name: "Thu", value: 0 },
+//   { name: "Fri", value: 0 },
+//   { name: "Sat", value: 0 },
+// ];
 
-const revenueData = [
-  { name: "Jun", value: 15000000 },
-  { name: "Jul", value: 4000000 },
-  { name: "Aug", value: 8000000 },
-  { name: "Sep", value: 200000 },
-  { name: "Oct", value: 100000 },
-  { name: "Nov", value: 50000 },
-];
+// const revenueData = [
+//   { name: "Jun", value: 15000000 },
+//   { name: "Jul", value: 4000000 },
+//   { name: "Aug", value: 8000000 },
+//   { name: "Sep", value: 200000 },
+//   { name: "Oct", value: 100000 },
+//   { name: "Nov", value: 50000 },
+// ];
 
 const recentOrders = [
   {
