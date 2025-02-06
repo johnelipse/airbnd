@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,63 +14,118 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImagePlus, Wifi, Car, Utensils, Timer } from "lucide-react";
-import { usePropertyForm } from "@/store/use-property-form";
-import type React from "react"; // Added import for React
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Wifi, Car, Utensils, Loader } from "lucide-react";
+import type { Category } from "@prisma/client";
+import { useForm, Controller } from "react-hook-form";
+import FormSelectInput from "../formIniputs/form-select";
+import TextInput from "../formIniputs/text-input";
+import TextArea from "../formIniputs/textarea";
+import MultipleImageInput from "../formIniputs/multiple-image-input";
+import toast from "react-hot-toast";
 
-export default function PropertyListingForm() {
+export interface FormValues {
+  title: string;
+  images: string[];
+  slug: string;
+  description: string;
+  propertyType: string;
+  maxGuests: string;
+  bedrooms: string;
+  bathrooms: string;
+  amenities: string[];
+  location: string;
+  price: number;
+  categoryId: string;
+}
+
+export default function PropertyListingForm({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const {
-    step,
-    title,
-    description,
-    propertyType,
-    maxGuests,
-    bedrooms,
-    bathrooms,
-    amenities,
-    price,
-    checkIn,
-    checkOut,
-    images,
-    setStep,
-    updateField,
+    control,
+    handleSubmit,
+    register,
     reset,
-  } = usePropertyForm();
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      propertyType: "entire-place",
+      amenities: [],
+    },
+  });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newImages: string[] = [];
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newImages.push(reader.result as string);
-          if (newImages.length === files.length) {
-            updateField("images", [...images, ...newImages]);
-          }
-        };
-        reader.readAsDataURL(file);
+  const [productImages, setProductImages] = useState([
+    "/placeholder.png",
+    "/placeholder.png",
+    "/placeholder.png",
+  ]);
+
+  const [selectedCat, setSelectedCat] = useState<any>("");
+  const [loading, setLoading] = useState(false);
+
+  const selectCategory = categories.map((cat) => ({
+    value: cat.id,
+    label: cat.title,
+  }));
+
+  async function onSubmit(data: FormValues) {
+    data.categoryId = selectedCat.value;
+    data.price = Number(data.price);
+    (data.images = productImages),
+      (data.slug = data.title.split(" ").join("-").toLowerCase());
+    try {
+      setLoading(true);
+      const res = await fetch("/api/properties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
+      if (res) {
+        setLoading(false);
+        reset();
+        toast.success("😂 Property created successfully.");
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      toast.error("😒 Something went wrong.");
     }
-  };
+  }
 
-  const handleSubmit = () => {
-    // Here you would typically send the data to your backend
-    console.log({
-      title,
-      description,
-      propertyType,
-      maxGuests,
-      bedrooms,
-      bathrooms,
-      amenities,
-      price,
-      checkIn,
-      checkOut,
-      images,
-    });
-    reset(); // Reset form after submission
-  };
+  //   const onSubmit = async (data: FormValues) => {
+  //     data.categoryId = selectedCat.value;
+  //     data.price = Number(data.price);
+  //     (data.images = productImages),
+  //       (data.slug = data.title.split(" ").join("-").toLowerCase());
+  //     try {
+  //       setLoading(true);
+  //       const res = await fetch("/api/properties", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       });
+  //       if (res) {
+  //         setLoading(false);
+  //         reset();
+  //         toast.success("😂 Property created successfully.");
+  //       } else {
+  //         setLoading(false);
+  //       }
+  //     } catch (error) {
+  //       setLoading(false);
+  //       console.log(error);
+  //       toast.error("😒 Something went wrong.");
+  //     }
+  //   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -80,272 +134,240 @@ export default function PropertyListingForm() {
           <CardTitle className="text-2xl">List Your Property</CardTitle>
         </CardHeader>
         <CardContent>
-          {step === 1 && (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">Property Title</Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => updateField("title", e.target.value)}
-                  placeholder="Enter an attractive title for your property"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => updateField("description", e.target.value)}
-                  placeholder="Describe your property in detail"
-                  className="min-h-[150px]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Property Type</Label>
-                <RadioGroup
-                  value={propertyType}
-                  onValueChange={(value) => updateField("propertyType", value)}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                >
-                  <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
-                    <RadioGroupItem value="entire-place" id="entire-place" />
-                    <span>Entire Place</span>
-                  </Label>
-                  <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
-                    <RadioGroupItem value="private-room" id="private-room" />
-                    <span>Private Room</span>
-                  </Label>
-                  <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
-                    <RadioGroupItem value="shared-room" id="shared-room" />
-                    <span>Shared Room</span>
-                  </Label>
-                </RadioGroup>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="guests">Max Guests</Label>
-                  <Select
-                    value={maxGuests}
-                    onValueChange={(value) => updateField("maxGuests", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bedrooms">Bedrooms</Label>
-                  <Select
-                    value={bedrooms}
-                    onValueChange={(value) => updateField("bedrooms", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5, 6].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bathrooms">Bathrooms</Label>
-                  <Select
-                    value={bathrooms}
-                    onValueChange={(value) => updateField("bathrooms", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 1.5, 2, 2.5, 3, 3.5, 4].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Amenities</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[
-                    { id: "wifi", label: "WiFi", icon: Wifi },
-                    { id: "parking", label: "Parking", icon: Car },
-                    { id: "kitchen", label: "Kitchen", icon: Utensils },
-                  ].map(({ id, label, icon: Icon }) => (
-                    <Label
-                      key={id}
-                      className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary"
-                    >
-                      <Checkbox
-                        id={id}
-                        checked={amenities.includes(id)}
-                        onCheckedChange={(checked) => {
-                          updateField(
-                            "amenities",
-                            checked
-                              ? [...amenities, id]
-                              : amenities.filter((item) => item !== id)
-                          );
-                        }}
-                      />
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" />
-                        <span>{label}</span>
-                      </div>
-                    </Label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Base Price (per night)</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                      $
-                    </span>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={price}
-                      onChange={(e) => updateField("price", e.target.value)}
-                      className="pl-7"
-                      placeholder="0"
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                <TabsTrigger value="details">Property Details</TabsTrigger>
+                <TabsTrigger value="pricing">Pricing & Times</TabsTrigger>
+                <TabsTrigger value="images">Images</TabsTrigger>
+              </TabsList>
+              <TabsContent value="basic">
+                <div className="space-y-6">
+                  <div className="grid gap-3 pt-3">
+                    <TextInput
+                      register={register}
+                      errors={errors}
+                      label="Property Title"
+                      name="title"
+                    />
+                  </div>
+                  <div className="grid gap-3">
+                    <TextArea
+                      register={register}
+                      errors={errors}
+                      label="Product Description"
+                      name="description"
+                    />
+                  </div>
+                  <div>
+                    <FormSelectInput
+                      label="Category"
+                      options={selectCategory}
+                      option={selectedCat}
+                      setOption={setSelectedCat}
+                      toolTipText="Add New Category"
+                      href="/dashboard/inventory/categories/new"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Property Type</Label>
+                    <Controller
+                      name="propertyType"
+                      control={control}
+                      rules={{ required: "Property type is required" }}
+                      render={({ field }) => (
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                        >
+                          <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
+                            <RadioGroupItem
+                              value="entire-place"
+                              id="entire-place"
+                            />
+                            <span>Entire Place</span>
+                          </Label>
+                          <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
+                            <RadioGroupItem
+                              value="private-room"
+                              id="private-room"
+                            />
+                            <span>Private Room</span>
+                          </Label>
+                          <Label className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary">
+                            <RadioGroupItem
+                              value="shared-room"
+                              id="shared-room"
+                            />
+                            <span>Shared Room</span>
+                          </Label>
+                        </RadioGroup>
+                      )}
                     />
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Check-in/out Times</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <Timer className="h-4 w-4" />
-                      <Select
-                        value={checkIn}
-                        onValueChange={(value) => updateField("checkIn", value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Check-in" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["14:00", "15:00", "16:00"].map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
+              </TabsContent>
+              <TabsContent value="details">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Controller
+                      name="maxGuests"
+                      control={control}
+                      rules={{ required: "Max guests is required" }}
+                      render={({ field }) => (
+                        <div className="space-y-2">
+                          <Label htmlFor="maxGuests">Max Guests</Label>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    />
+                    <Controller
+                      name="bedrooms"
+                      control={control}
+                      rules={{ required: "Bedrooms is required" }}
+                      render={({ field }) => (
+                        <div className="space-y-2">
+                          <Label htmlFor="bedrooms">Bedrooms</Label>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 2, 3, 4, 5, 6].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    />
+                    <Controller
+                      name="bathrooms"
+                      control={control}
+                      rules={{ required: "Bathrooms is required" }}
+                      render={({ field }) => (
+                        <div className="space-y-2">
+                          <Label htmlFor="bathrooms">Bathrooms</Label>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 1.5, 2, 2.5, 3, 3.5, 4].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Amenities</Label>
+                    <Controller
+                      name="amenities"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {[
+                            { id: "wifi", label: "WiFi", icon: Wifi },
+                            { id: "parking", label: "Parking", icon: Car },
+                            { id: "kitchen", label: "Kitchen", icon: Utensils },
+                          ].map(({ id, label, icon: Icon }) => (
+                            <Label
+                              key={id}
+                              className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer [&:has(:checked)]:border-primary"
+                            >
+                              <Checkbox
+                                id={id}
+                                checked={field.value?.includes(id)}
+                                onCheckedChange={(checked) => {
+                                  const updatedValue = checked
+                                    ? [...(field.value || []), id]
+                                    : (field.value || []).filter(
+                                        (item) => item !== id
+                                      );
+                                  field.onChange(updatedValue);
+                                }}
+                              />
+                              <div className="flex items-center gap-2">
+                                <Icon className="h-4 w-4" />
+                                <span>{label}</span>
+                              </div>
+                            </Label>
                           ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Timer className="h-4 w-4" />
-                      <Select
-                        value={checkOut}
-                        onValueChange={(value) =>
-                          updateField("checkOut", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Check-out" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["10:00", "11:00", "12:00"].map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        </div>
+                      )}
+                    />
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label>Property Photos</Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="aspect-square relative rounded-lg overflow-hidden"
-                    >
-                      <Image
-                        src={image || "/placeholder.svg"}
-                        alt={`Property photo ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                  <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary">
-                    <ImagePlus className="h-8 w-8 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      Add Photos
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
+              </TabsContent>
+              <TabsContent value="pricing">
+                <div className="space-y-6">
+                  <TextInput
+                    type="number"
+                    register={register}
+                    errors={errors}
+                    label="Property Price per night"
+                    name="price"
+                  />
+                  <TextInput
+                    type="text"
+                    register={register}
+                    errors={errors}
+                    label="Property Location"
+                    name="location"
+                  />
                 </div>
-              </div>
+              </TabsContent>
+              <TabsContent value="images">
+                <div className="space-y-6">
+                  <MultipleImageInput
+                    title="Property Images"
+                    imageUrls={productImages}
+                    setImageUrls={setProductImages}
+                    endpoint="imageUploader"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+            <div className="flex justify-end mt-8">
+              {loading ? (
+                <Button disabled>
+                  <Loader className="w-4 h-4 animate-spin flex items-center justify-center gap-2" />
+                  Submiting...
+                </Button>
+              ) : (
+                <Button type="submit">Submit Listing</Button>
+              )}
             </div>
-          )}
-
-          <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onClick={() => setStep(Math.max(1, step - 1))}
-              disabled={step === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={() => {
-                if (step < 4) {
-                  setStep(step + 1);
-                } else {
-                  handleSubmit();
-                }
-              }}
-            >
-              {step === 4 ? "Submit Listing" : "Next"}
-            </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>

@@ -13,12 +13,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Category {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
   title      String
-  slug       String   @unique
+  slug       String     @unique
   image      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  properties Property[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Property {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  images       String[]
+  slug         String    @unique
+  description  String
+  propertyType String
+  maxGuests    String
+  bedrooms     String
+  bathrooms    String
+  amenities    String[]
+  price        Int
+  location       String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String?   @db.ObjectId
 }
