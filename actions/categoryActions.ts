@@ -8,7 +8,7 @@ const categoryApi = `${baseUrl}/api/categories`;
 
 export async function getCategories() {
   try {
-    const res = await fetch(categoryApi);
+    const res = await fetch(categoryApi, { cache: "no-store" });
     const fetchedProducts = await res.json();
     return fetchedProducts.data as Category[];
   } catch (error) {
@@ -20,7 +20,7 @@ export async function getCategories() {
 export async function getSingleCat(slug: string) {
   const singleCatApi = `${categoryApi}/${slug}`;
   try {
-    const res = await fetch(singleCatApi);
+    const res = await fetch(singleCatApi, { cache: "no-store" });
     const singleCategory = await res.json();
     return singleCategory.data as Category & { properties: Property[] };
   } catch (error) {

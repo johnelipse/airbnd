@@ -7,7 +7,7 @@ export function Navbar() {
   return (
     <nav className="border-b">
       <div className="flex items-center justify-between px-6 py-4">
-        <Link href="/" className="text-primary">
+        <Link href="/" className="text-primary text-rose-500">
           <svg className="h-8 w-auto" viewBox="0 0 32 32">
             <path
               d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16S0 24.837 0 16 7.163 0 16 0zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 4a4 4 0 110 8 4 4 0 010-8zm0 2a2 2 0 100 4 2 2 0 000-4zm0 7c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5zm0 2c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"

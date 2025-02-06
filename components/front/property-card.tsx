@@ -32,7 +32,10 @@ export function PropertyCard({ property }: { property: Property }) {
     });
   }, [api]);
   return (
-    <Link href="" className="w-full rounded-md shadow-lg">
+    <Link
+      href={`/details/${property.slug}`}
+      className="w-full rounded-md shadow-lg"
+    >
       <Carousel setApi={setApi} className="w-full rounded-md">
         <CarouselContent>
           {property.images.map((image, index) => (

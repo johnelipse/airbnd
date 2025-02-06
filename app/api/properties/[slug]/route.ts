@@ -3,13 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = await params;
+  const { slug } = await params;
   try {
     const property = await db.property.findUnique({
       where: {
-        id,
+        slug,
+      },
+      include: {
+        Category: true,
       },
     });
     return NextResponse.json(
@@ -37,13 +40,13 @@ export async function GET(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = await params;
+  const { slug } = await params;
   try {
     await db.property.delete({
       where: {
-        id,
+        slug,
       },
     });
     return NextResponse.json({

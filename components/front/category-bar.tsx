@@ -57,7 +57,7 @@ export function CategoryBar({ categories }: { categories: Category[] }) {
   };
 
   return (
-    <div className="relative border-b bg-background">
+    <div className="relative  border-b bg-background">
       {/* Left Shadow Gradient */}
       <div
         className={cn(

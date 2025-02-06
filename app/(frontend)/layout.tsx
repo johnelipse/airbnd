@@ -6,7 +6,7 @@ export default function layout({ children }: { children: ReactNode }) {
   return (
     <div>
       <Header />
-      <main className="pt-[calc(64px+56px+72px+68px)]">{children}</main>
+      <main className="pt-[8.5rem] px-6">{children}</main>
       <Footer />
     </div>
   );

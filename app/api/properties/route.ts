@@ -29,6 +29,9 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        Category: true,
+      },
     });
     return NextResponse.json(
       {
