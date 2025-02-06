@@ -93,8 +93,8 @@ const data = {
           icon: FilePlus2,
         },
         {
-          title: "About Me Data",
-          url: "/dashboard/aboutmedata",
+          title: "Product",
+          url: "/dashboard/product/new",
         },
         {
           title: "Settings",

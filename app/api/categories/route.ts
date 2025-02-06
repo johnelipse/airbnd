@@ -26,7 +26,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const categories = await db.category.findMany();
+    const categories = await db.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
     return NextResponse.json(
       {
         message: "Categories fetched successfully",
