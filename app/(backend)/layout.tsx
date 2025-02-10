@@ -1,3 +1,4 @@
+import BackHeader from "@/components/back/backHeader";
 import SideBar from "@/components/back/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React, { ReactNode } from "react";
@@ -13,7 +14,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <SideBar />
         </div>
 
-        <main className=" md:flex-grow">{children}</main>
+        <main className=" md:flex-grow">
+          <div>
+            <BackHeader />
+          </div>
+          <div className="pt-12">{children}</div>
+        </main>
       </div>
     </SidebarProvider>
   );
