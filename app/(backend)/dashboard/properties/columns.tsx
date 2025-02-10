@@ -48,8 +48,8 @@ export const columns: ColumnDef<Property>[] = [
       return (
         <ActionColumn
           row={row}
-          model="event"
-          editEndpoint={`/create-event/${data.slug}`}
+          model="property"
+          editEndpoint={`/dashboard/product/update/${data.slug}`}
           slug={data.slug}
         />
       );

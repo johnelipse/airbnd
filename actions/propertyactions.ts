@@ -30,3 +30,24 @@ export async function getSingleProperty(slug: string) {
     return null;
   }
 }
+
+export async function deleteProperty(slug: string) {
+  const singlePropertyApi = `${propertyApi}/${slug}`;
+  try {
+    const res = await fetch(singlePropertyApi, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+    return {
+      ok: true,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      ok: false,
+    };
+  }
+}

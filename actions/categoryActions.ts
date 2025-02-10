@@ -37,6 +37,7 @@ export async function deleteCat(slug: string) {
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
     return { ok: true };
   } catch (error) {

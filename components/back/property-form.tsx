@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Wifi, Car, Utensils, Loader } from "lucide-react";
-import type { Category } from "@prisma/client";
+import type { Category, Property } from "@prisma/client";
 import { useForm, Controller } from "react-hook-form";
 import FormSelectInput from "../formIniputs/form-select";
 import TextInput from "../formIniputs/text-input";
 import TextArea from "../formIniputs/textarea";
 import MultipleImageInput from "../formIniputs/multiple-image-input";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export interface FormValues {
   title: string;
@@ -41,8 +42,15 @@ export interface FormValues {
 
 export default function PropertyListingForm({
   categories,
+  initialData,
 }: {
   categories: Category[];
+  initialData?:
+    | (Property & {
+        Category: Category;
+      })
+    | null
+    | any;
 }) {
   const {
     control,
@@ -52,19 +60,39 @@ export default function PropertyListingForm({
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      propertyType: "entire-place",
-      amenities: [],
+      propertyType: initialData?.propertyType || "entire-place",
+      amenities: initialData?.amenities || [],
+      title: initialData?.title,
+      description: initialData?.description,
+      bathrooms: initialData?.bathrooms,
+      price: initialData?.price,
+      bedrooms: initialData?.bedrooms,
+      location: initialData?.location,
+      maxGuests: initialData?.maxGuests,
     },
   });
 
-  const [productImages, setProductImages] = useState([
-    "/placeholder.png",
-    "/placeholder.png",
-    "/placeholder.png",
-  ]);
+  const [productImages, setProductImages] = useState(
+    initialData?.images || [
+      "/placeholder.png",
+      "/placeholder.png",
+      "/placeholder.png",
+    ]
+  );
 
-  const [selectedCat, setSelectedCat] = useState<any>("");
+  const [selectedCat, setSelectedCat] = useState<any>(
+    initialData
+      ? {
+          value: initialData.Category.id,
+          label: initialData.Category.title,
+        }
+      : ""
+  );
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [currentTab, setCurrentTab] = useState("basic");
+
+  const tabs = ["basic", "details", "pricing", "images"];
 
   const selectCategory = categories.map((cat) => ({
     value: cat.id,
@@ -76,56 +104,60 @@ export default function PropertyListingForm({
     data.price = Number(data.price);
     (data.images = productImages),
       (data.slug = data.title.split(" ").join("-").toLowerCase());
-    try {
-      setLoading(true);
-      const res = await fetch("/api/properties", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (res) {
+    if (initialData) {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/properties/${initialData.slug}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (res) {
+          setLoading(false);
+          toast.success("😂 Property updated successfully.");
+          router.push("/dashboard/properties");
+          router.refresh();
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
         setLoading(false);
-        reset();
-        toast.success("😂 Property created successfully.");
-      } else {
-        setLoading(false);
+        console.log(error);
+        toast.error("😒 Something went wrong.");
       }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-      toast.error("😒 Something went wrong.");
+    } else {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/properties", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (res) {
+          setLoading(false);
+          reset();
+          setProductImages([
+            "/placeholder.png",
+            "/placeholder.png",
+            "/placeholder.png",
+          ]);
+          toast.success("😂 Property created successfully.");
+          router.push("/dashboard/properties");
+          router.refresh();
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+        toast.error("😒 Something went wrong.");
+      }
     }
   }
-
-  //   const onSubmit = async (data: FormValues) => {
-  //     data.categoryId = selectedCat.value;
-  //     data.price = Number(data.price);
-  //     (data.images = productImages),
-  //       (data.slug = data.title.split(" ").join("-").toLowerCase());
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch("/api/properties", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-  //       if (res) {
-  //         setLoading(false);
-  //         reset();
-  //         toast.success("😂 Property created successfully.");
-  //       } else {
-  //         setLoading(false);
-  //       }
-  //     } catch (error) {
-  //       setLoading(false);
-  //       console.log(error);
-  //       toast.error("😒 Something went wrong.");
-  //     }
-  //   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -135,7 +167,12 @@ export default function PropertyListingForm({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Tabs defaultValue="basic" className="w-full">
+            <Tabs
+              value={currentTab}
+              onValueChange={setCurrentTab}
+              // defaultValue="basic"
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="details">Property Details</TabsTrigger>
@@ -167,7 +204,7 @@ export default function PropertyListingForm({
                       option={selectedCat}
                       setOption={setSelectedCat}
                       toolTipText="Add New Category"
-                      href="/dashboard/inventory/categories/new"
+                      href="/dashboard/category/new"
                     />
                   </div>
                   <div className="space-y-2">
@@ -357,15 +394,47 @@ export default function PropertyListingForm({
                 </div>
               </TabsContent>
             </Tabs>
-            <div className="flex justify-end mt-8">
-              {loading ? (
-                <Button disabled>
-                  <Loader className="w-4 h-4 animate-spin flex items-center justify-center gap-2" />
-                  Submiting...
+            <div className="flex justify-between mt-8">
+              {currentTab !== "basic" && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const currentIndex = tabs.indexOf(currentTab);
+                    setCurrentTab(tabs[currentIndex - 1]);
+                  }}
+                >
+                  Previous
                 </Button>
-              ) : (
-                <Button type="submit">Submit Listing</Button>
               )}
+              <div className="ml-auto">
+                {currentTab !== "images" && (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const currentIndex = tabs.indexOf(currentTab);
+                      setCurrentTab(tabs[currentIndex + 1]);
+                    }}
+                  >
+                    Next
+                  </Button>
+                )}
+                {currentTab === "images" && (
+                  <Button
+                    disabled={loading}
+                    className={`${loading && `flex gap-3 items-center`}`}
+                    type="submit"
+                  >
+                    {loading && <Loader className="w-4 h-4 animate-spin" />}
+                    {initialData && loading && "Updating..."}
+
+                    {!initialData && loading && "Submiting..."}
+                    {initialData && !loading && "Upadate"}
+                    {!initialData && !loading && "Submit Listing"}
+                    {/* {loading ? "Submiting..." : "Submit Listing"} */}
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </CardContent>

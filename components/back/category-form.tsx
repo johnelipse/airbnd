@@ -15,6 +15,7 @@ import { CategoryProps } from "@/types/type";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 import { Category } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -36,6 +37,7 @@ export default function CategoryForm({
   });
   const initialImage = initialData?.image || "/placeholder.png";
   const [imageUrl, setImageUrl] = useState(initialImage);
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   async function onSubmit(data: CategoryProps) {
     data.image = imageUrl;
@@ -55,6 +57,8 @@ export default function CategoryForm({
           reset();
           setImageUrl(initialImage);
           toast.success("🚀 Category updated successfully");
+          router.push("/dashboard/categories");
+          router.refresh();
         }
       } catch (error) {
         setLoading(false);
@@ -76,6 +80,8 @@ export default function CategoryForm({
           reset();
           setImageUrl(initialImage);
           toast.success("🚀 Category created successfully");
+          router.push("/dashboard/categories");
+          router.refresh();
         }
       } catch (error) {
         setLoading(false);

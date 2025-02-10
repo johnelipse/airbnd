@@ -9,7 +9,7 @@ export default async function page() {
   return (
     <div className="lg:p-8 md:p-8 ">
       <TableHeader
-        title="Categories"
+        title="Properties"
         linkTitle="Create Property"
         href="/dashboard/product/new"
         data={properties}
