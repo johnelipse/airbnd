@@ -99,3 +99,9 @@ body {
     display: none;
   }
 }
+
+@media (max-width: 920px) {
+  .display-no {
+    display: none;
+  }
+}

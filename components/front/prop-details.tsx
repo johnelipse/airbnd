@@ -14,7 +14,7 @@ export default function PropertyDetails({
   property: Property | null;
 }) {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container py-8">
       {/* Header Section */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-4">{property?.title}</h1>
@@ -36,7 +36,7 @@ export default function PropertyDetails({
       </div>
 
       {/* Photo Gallery */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
         <div className="col-span-2 row-span-2">
           <Image
             src={property?.images[0] as string}
@@ -65,7 +65,10 @@ export default function PropertyDetails({
           />
         </div>
         <div className="relative">
-          <Button variant="secondary" className="absolute bottom-4 right-4">
+          <Button
+            variant="secondary"
+            className="absolute hidden bottom-4 right-4"
+          >
             Show all photos
           </Button>
           <Image
@@ -79,7 +82,7 @@ export default function PropertyDetails({
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="col-span-2">
           <div className="border-b pb-6 mb-6">
             <div className="flex items-center justify-between mb-4">
@@ -122,7 +125,7 @@ export default function PropertyDetails({
         </div>
 
         {/* Booking Card */}
-        <Card className="p-6 h-fit sticky top-4">
+        <Card className="p-6 h-fit display-no sticky  top-4">
           <div className="mb-4">
             <div className="flex justify-between items-baseline mb-4">
               <span className="text-2xl font-bold">US${property?.price}</span>
