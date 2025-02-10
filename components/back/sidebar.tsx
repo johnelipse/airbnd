@@ -93,102 +93,102 @@ const data = {
           icon: FilePlus2,
         },
         {
-          title: "Product",
+          title: "Property",
           url: "/dashboard/product/new",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Properties",
+          url: "/dashboard/properties",
         },
         {
-          title: "History",
-          url: "#",
+          title: "Categories",
+          url: "/dashboard/categories",
         },
       ],
     },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "Models",
+    //   url: "#",
+    //   icon: Bot,
+    //   items: [
+    //     {
+    //       title: "Genesis",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Explorer",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Quantum",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "Documentation",
+    //   url: "#",
+    //   icon: BookOpen,
+    //   items: [
+    //     {
+    //       title: "Introduction",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Get Started",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Tutorials",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Changelog",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "Settings",
+    //   url: "#",
+    //   icon: Settings2,
+    //   items: [
+    //     {
+    //       title: "General",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Team",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Billing",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Limits",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: <Frame />,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: <PieChart />,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: <Map />,
-    },
-  ],
+  // projects: [
+  //   {
+  //     name: "Design Engineering",
+  //     url: "#",
+  //     icon: <Frame />,
+  //   },
+  //   {
+  //     name: "Sales & Marketing",
+  //     url: "#",
+  //     icon: <PieChart />,
+  //   },
+  //   {
+  //     name: "Travel",
+  //     url: "#",
+  //     icon: <Map />,
+  //   },
+  // ],
 };
 export default function SideBar() {
   const [activeTeam, setActiveTeam] = React.useState(data.teams[0]);
@@ -289,9 +289,9 @@ export default function SideBar() {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel>Projects</SidebarGroupLabel>
+          {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
           <SidebarMenu>
-            {data.projects.map((item) => {
+            {/* {data.projects.map((item) => {
               return (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild>
@@ -329,13 +329,13 @@ export default function SideBar() {
                   </DropdownMenu>
                 </SidebarMenuItem>
               );
-            })}
-            <SidebarMenuItem>
+            })} */}
+            {/* <SidebarMenuItem>
               <SidebarMenuButton className="text-sidebar-foreground/70">
                 <MoreHorizontal className="text-sidebar-foreground/70" />
                 <span>More</span>
               </SidebarMenuButton>
-            </SidebarMenuItem>
+            </SidebarMenuItem> */}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

@@ -28,3 +28,19 @@ export async function getSingleCat(slug: string) {
     return null;
   }
 }
+
+export async function deleteCat(slug: string) {
+  const singleCatApi = `${categoryApi}/${slug}`;
+  try {
+    const res = await fetch(singleCatApi, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return { ok: true };
+  } catch (error) {
+    console.log(error);
+    return { ok: false };
+  }
+}

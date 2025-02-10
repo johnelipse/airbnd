@@ -32,21 +32,20 @@ export function PropertyCard({ property }: { property: Property }) {
     });
   }, [api]);
   return (
-    <Link
-      href={`/details/${property.slug}`}
-      className="w-full rounded-md shadow-lg"
-    >
+    <div className="w-full rounded-md shadow-lg">
       <Carousel setApi={setApi} className="w-full rounded-md">
         <CarouselContent>
           {property.images.map((image, index) => (
             <CarouselItem key={index}>
-              <div className="relative aspect-[5/4]">
-                <img
-                  alt={property.title}
-                  className="object-cover w-full h-full rounded-t-lg"
-                  src={image}
-                />
-              </div>
+              <Link href={`/details/${property.slug}`}>
+                <div className="relative aspect-[5/4]">
+                  <img
+                    alt={property.title}
+                    className="object-cover w-full h-full rounded-t-lg"
+                    src={image}
+                  />
+                </div>
+              </Link>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -67,7 +66,7 @@ export function PropertyCard({ property }: { property: Property }) {
       )} */}
       <div className="mt-2 px-3 py-3 space-y-1">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium">{property.location}</h3>
+          <h3 className="font-medium line-clamp-1">{property.location}</h3>
           <div className="flex items-center gap-1">
             <span className="text-yellow-400">★</span>
             <span>4.9</span>
@@ -81,6 +80,6 @@ export function PropertyCard({ property }: { property: Property }) {
           ${property.price} <span className="text-muted-foreground">night</span>
         </p>
       </div>
-    </Link>
+    </div>
   );
 }

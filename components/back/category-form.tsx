@@ -14,41 +14,74 @@ import ImageInput from "../formIniputs/image-input";
 import { CategoryProps } from "@/types/type";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
+import { Category } from "@prisma/client";
 
 // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-export default function CategoryForm() {
+export default function CategoryForm({
+  initialData,
+}: {
+  initialData?: Category | null;
+}) {
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<CategoryProps>();
-  const initialImage = "/placeholder.png";
+  } = useForm<CategoryProps>({
+    defaultValues: {
+      title: initialData?.title,
+      slug: initialData?.slug,
+    },
+  });
+  const initialImage = initialData?.image || "/placeholder.png";
   const [imageUrl, setImageUrl] = useState(initialImage);
   const [loading, setLoading] = useState(false);
   async function onSubmit(data: CategoryProps) {
     data.image = imageUrl;
     data.slug = data.title.toLowerCase().split(" ").join("-").toLowerCase();
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/categories`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
+    if (initialData) {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/categories/${initialData.slug}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (response.ok) {
+          setLoading(false);
+          reset();
+          setImageUrl(initialImage);
+          toast.success("🚀 Category updated successfully");
+        }
+      } catch (error) {
         setLoading(false);
-        reset();
-        setImageUrl(initialImage);
-        toast.success("🚀 Category created successfully");
+        console.log(error);
+        toast.error("😒 Failed to update category");
       }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-      toast.error("😒 Failed to create category");
+    } else {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/categories`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (response.ok) {
+          setLoading(false);
+          reset();
+          setImageUrl(initialImage);
+          toast.success("🚀 Category created successfully");
+        }
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+        toast.error("😒 Failed to create category");
+      }
     }
   }
 
@@ -85,10 +118,12 @@ export default function CategoryForm() {
             className="w-full flex items-center justify-center gap-2"
           >
             <Loader className="animate-spin" size={20} />
-            Creating...
+            {initialData ? "Updating..." : "Creating..."}
           </Button>
         ) : (
-          <Button className="w-full">Create Category</Button>
+          <Button className="w-full">
+            {initialData ? "Update Category" : "Create Category"}
+          </Button>
         )}
       </CardFooter>
     </form>

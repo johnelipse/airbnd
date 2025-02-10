@@ -10,7 +10,9 @@ export async function getProperties() {
   try {
     const res = await fetch(propertyApi, { cache: "no-store" });
     const fetchedProducts = await res.json();
-    return fetchedProducts.data as Property[];
+    return fetchedProducts.data as Property[] & {
+      Category: Category;
+    };
   } catch (error) {
     console.log(error);
     return [];
