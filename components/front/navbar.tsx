@@ -1,9 +1,20 @@
+"use client";
 import Link from "next/link";
-import { Globe, Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthUser } from "@/lib/dal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { logout } from "@/actions/useractions";
 
-export function Navbar() {
+export function Navbar({ user }: { user: AuthUser | null }) {
   return (
     <nav className="border-b">
       <div className="flex items-center justify-between px-6 py-4">
@@ -22,20 +33,45 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 rounded-full"
+                >
+                  <Menu className="h-4 w-4" />
+                  <Avatar className="h-[1.5rem] w-[1.5rem]">
+                    <AvatarImage src={user?.image} />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="px-1 w-3">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link className="text-sm" href="/dashboard">
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-sm" onClick={() => logout()}>
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              className="py-1 px-3 bg-[#b41d39]
+            text-white rounded-md"
+              href="/login"
+            >
+              Login
+            </Link>
+          )}
           <Button variant="ghost" size="sm">
             Airbnb your home
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Globe className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 rounded-full"
-          >
-            <Menu className="h-4 w-4" />
-            <Avatar className="h-8 w-8">
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
           </Button>
         </div>
       </div>

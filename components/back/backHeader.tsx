@@ -5,8 +5,9 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Plus, Sun } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AuthUser } from "@/lib/dal";
 
-export default function BackHeader() {
+export default function BackHeader({ user }: { user: AuthUser }) {
   const [searchQuery, setSearchQuery] = React.useState("");
   return (
     <header className="fixed top-0 w-[80%] bg-white/50 z-40 backdrop-blur-lg">
@@ -29,7 +30,7 @@ export default function BackHeader() {
           <span className="sr-only">Add new</span>
         </Button>
         <Avatar>
-          <AvatarImage src="/placeholder.svg" />
+          <AvatarImage src={user.image} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </div>
