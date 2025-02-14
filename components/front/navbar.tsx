@@ -70,7 +70,7 @@ export function Navbar({ user }: { user: AuthUser | null }) {
               Login
             </Link>
           )}
-          <Button variant="ghost" size="sm">
+          <Button className="hidden md:block" variant="ghost" size="sm">
             Airbnb your home
           </Button>
         </div>
