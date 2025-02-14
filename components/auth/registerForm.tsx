@@ -16,6 +16,7 @@ import { RegisterFormProps } from "@/types/type";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import ImageInput from "../formIniputs/image-input";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
   const {
@@ -45,6 +46,7 @@ export function RegisterForm() {
         toast.success("❤️ account created successfully.");
         reset();
         setImageUrl(initialImage);
+        useRouter().push("/login");
       } else if (res.status === 409) {
         setLoading(false);
         setEmailerr("Email exists or its not valid");
