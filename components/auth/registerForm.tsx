@@ -26,6 +26,7 @@ export function RegisterForm() {
     formState: { errors },
   } = useForm<RegisterFormProps>();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const initialImage = "/placeholder.png";
   const [imageUrl, setImageUrl] = useState(initialImage);
   const [emailerr, setEmailerr] = useState("");
@@ -46,7 +47,7 @@ export function RegisterForm() {
         toast.success("❤️ account created successfully.");
         reset();
         setImageUrl(initialImage);
-        useRouter().push("/login");
+        router.push("/login");
         return;
       } else if (res.status === 409) {
         setLoading(false);
