@@ -47,10 +47,12 @@ export function RegisterForm() {
         reset();
         setImageUrl(initialImage);
         useRouter().push("/login");
+        return;
       } else if (res.status === 409) {
         setLoading(false);
         setEmailerr("Email exists or its not valid");
         toast.error("Email exists or its not valid");
+        return;
       }
     } catch (error) {
       setLoading(false);
