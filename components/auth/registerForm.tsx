@@ -110,7 +110,6 @@ export function RegisterForm() {
               name="password"
               icon={Lock}
               placeholder="password"
-              //   forgotPasswordLink="/forgot-password"
             />
           </div>
           <div className="mt-4">
