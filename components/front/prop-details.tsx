@@ -6,13 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { Property } from "@prisma/client";
+import { useSingleProperty } from "@/hooks/use-data-hook";
 
-export default function PropertyDetails({
-  property,
-}: {
-  property: Property | null;
-}) {
+export default function PropertyDetails({ slug }: { slug: string }) {
+  const { property, isLoading } = useSingleProperty(slug);
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl flex justify-center items-center mx-auto p-8">
+        <p className="text-xl animate-pulse ">Loading...</p>
+      </div>
+    );
+  }
   return (
     <div className="container py-8">
       {/* Header Section */}

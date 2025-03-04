@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { Category } from "@prisma/client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCategory } from "@/hooks/use-data-hook";
 
 export function CategoryBar({ categories }: { categories: Category[] }) {
+  const { allCategories } = useCategory();
   const pathname = usePathname();
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = React.useState(0);
@@ -83,7 +85,7 @@ export function CategoryBar({ categories }: { categories: Category[] }) {
         ref={scrollContainerRef}
         className="flex w-full items-center gap-4 overflow-x-auto scroll-smooth px-4 py-4 scrollbar-hide"
       >
-        {categories.map((category) => {
+        {allCategories.map((category) => {
           const categoryPath = `/${category.slug}`;
           const isActive = pathname === categoryPath;
           return (

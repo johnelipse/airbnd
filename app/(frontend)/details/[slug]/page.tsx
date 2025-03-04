@@ -11,7 +11,7 @@ export default async function page({
   const property = await getSingleProperty(slug);
   return (
     <div>
-      <PropertyDetails property={property} />
+      <PropertyDetails slug={slug} />
     </div>
   );
 }

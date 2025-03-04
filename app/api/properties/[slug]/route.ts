@@ -1,11 +1,12 @@
 import { FormValues } from "@/components/back/property-form";
 import { db } from "@/lib/db";
+import { SingleQueryResponse } from "@/types/react-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-) {
+): Promise<NextResponse<SingleQueryResponse>> {
   const { slug } = await params;
   try {
     const property = await db.property.findUnique({
@@ -31,6 +32,7 @@ export async function GET(
       {
         messsage: "failed",
         error: "message failed",
+        data: null,
       },
       {
         status: 500,

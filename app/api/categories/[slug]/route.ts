@@ -1,11 +1,12 @@
 import { db } from "@/lib/db";
+import { SingleCatQueryResponse } from "@/types/react-types";
 import { CategoryProps } from "@/types/type";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-) {
+): Promise<NextResponse<SingleCatQueryResponse>> {
   const { slug } = await params;
   try {
     const category = await db.category.findUnique({
@@ -18,7 +19,6 @@ export async function GET(
     });
     return NextResponse.json(
       {
-        message: "Category fetched successfully",
         data: category,
       },
       {
@@ -28,7 +28,7 @@ export async function GET(
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { message: "Failed to fetch category" },
+      { data: null, error: "Something went wrong." },
       { status: 500 }
     );
   }

@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { Property } from "@prisma/client";
 import Link from "next/link";
+import { useProperty } from "@/hooks/use-data-hook";
 
 export function PropertyCard({ property }: { property: Property }) {
   const [api, setApi] = useState<CarouselApi>();

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { QueriesCatResponse } from "@/types/react-types";
 import { CategoryProps } from "@/types/type";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<QueriesCatResponse>> {
   try {
     const categories = await db.category.findMany({
       orderBy: {
@@ -36,7 +37,6 @@ export async function GET() {
     });
     return NextResponse.json(
       {
-        message: "Categories fetched successfully",
         data: categories,
       },
       {
@@ -46,7 +46,7 @@ export async function GET() {
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { message: "Failed to fetch categories" },
+      { data: [], error: "Something went wrong" },
       { status: 500 }
     );
   }

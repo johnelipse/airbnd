@@ -1,5 +1,6 @@
 import { FormValues } from "@/components/back/property-form";
 import { db } from "@/lib/db";
+import { QueriesResponse } from "@/types/react-types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<QueriesResponse>> {
   try {
     const properties = await db.property.findMany({
       orderBy: {
@@ -35,13 +36,13 @@ export async function GET() {
     });
     return NextResponse.json(
       {
-        message: "Success",
         data: properties,
+        error: "",
       },
       { status: 200 }
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: "Failed" }, { status: 500 });
+    return NextResponse.json({ data: [] }, { status: 500 });
   }
 }
